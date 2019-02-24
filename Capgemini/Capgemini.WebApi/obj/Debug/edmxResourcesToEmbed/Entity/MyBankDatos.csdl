@@ -1,0 +1,165 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="mybankModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="channel">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="name" Type="String" MaxLength="45" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="description" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+    <NavigationProperty Name="transaction" Relationship="Self.tr_channel_fk" FromRole="channel" ToRole="transaction" />
+  </EntityType>
+  <EntityType Name="customer">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="name" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="surname" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="customer_id" Type="String" MaxLength="15" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="email" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="mobile" Type="String" MaxLength="15" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="phone" Type="String" MaxLength="15" FixedLength="false" Unicode="false" />
+    <Property Name="password" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+    <NavigationProperty Name="customer_product" Relationship="Self.customer_fk" FromRole="customer" ToRole="customer_product" />
+  </EntityType>
+  <EntityType Name="customer_product">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="customer_id" Type="Int32" Nullable="false" />
+    <Property Name="product_id" Type="Int32" Nullable="false" />
+    <Property Name="creation_date" Type="DateTime" Nullable="false" />
+    <Property Name="termination_date" Type="DateTime" />
+    <Property Name="balance" Type="Decimal" Nullable="false" />
+    <Property Name="status" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="product_number" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
+    <NavigationProperty Name="customer" Relationship="Self.customer_fk" FromRole="customer_product" ToRole="customer" />
+    <NavigationProperty Name="product" Relationship="Self.product_fk" FromRole="customer_product" ToRole="product" />
+    <NavigationProperty Name="transaction" Relationship="Self.tr_customer_product_fk" FromRole="customer_product" ToRole="transaction" />
+  </EntityType>
+  <EntityType Name="product">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="name" Type="String" MaxLength="45" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="description" Type="String" MaxLength="45" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="status" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
+    <NavigationProperty Name="customer_product" Relationship="Self.product_fk" FromRole="product" ToRole="customer_product" />
+  </EntityType>
+  <EntityType Name="transaction">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="customer_product_id" Type="Int32" Nullable="false" />
+    <Property Name="channel_id" Type="Int32" Nullable="false" />
+    <Property Name="amount" Type="Decimal" Nullable="false" />
+    <Property Name="date" Type="DateTime" Nullable="false" />
+    <Property Name="status" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="type" Type="Int32" Nullable="false" />
+    <Property Name="transaction_number" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="channel" Relationship="Self.tr_channel_fk" FromRole="transaction" ToRole="channel" />
+    <NavigationProperty Name="customer_product" Relationship="Self.tr_customer_product_fk" FromRole="transaction" ToRole="customer_product" />
+    <NavigationProperty Name="transaction_type" Relationship="Self.tr_trxtype" FromRole="transaction" ToRole="transaction_type" />
+  </EntityType>
+  <EntityType Name="transaction_type">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="description" Type="String" MaxLength="45" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="factor" Type="SByte" Nullable="false" />
+    <NavigationProperty Name="transaction" Relationship="Self.tr_trxtype" FromRole="transaction_type" ToRole="transaction" />
+  </EntityType>
+  <Association Name="tr_channel_fk">
+    <End Role="channel" Type="Self.channel" Multiplicity="1" />
+    <End Role="transaction" Type="Self.transaction" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="channel">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="transaction">
+        <PropertyRef Name="channel_id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="customer_fk">
+    <End Role="customer" Type="Self.customer" Multiplicity="1" />
+    <End Role="customer_product" Type="Self.customer_product" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="customer">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="customer_product">
+        <PropertyRef Name="customer_id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="product_fk">
+    <End Role="product" Type="Self.product" Multiplicity="1" />
+    <End Role="customer_product" Type="Self.customer_product" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="product">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="customer_product">
+        <PropertyRef Name="product_id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="tr_customer_product_fk">
+    <End Role="customer_product" Type="Self.customer_product" Multiplicity="1" />
+    <End Role="transaction" Type="Self.transaction" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="customer_product">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="transaction">
+        <PropertyRef Name="customer_product_id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="tr_trxtype">
+    <End Role="transaction_type" Type="Self.transaction_type" Multiplicity="1" />
+    <End Role="transaction" Type="Self.transaction" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="transaction_type">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="transaction">
+        <PropertyRef Name="type" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="mybankEntities2" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="channel" EntityType="Self.channel" />
+    <EntitySet Name="customer" EntityType="Self.customer" />
+    <EntitySet Name="customer_product" EntityType="Self.customer_product" />
+    <EntitySet Name="product" EntityType="Self.product" />
+    <EntitySet Name="transaction" EntityType="Self.transaction" />
+    <EntitySet Name="transaction_type" EntityType="Self.transaction_type" />
+    <AssociationSet Name="tr_channel_fk" Association="Self.tr_channel_fk">
+      <End Role="channel" EntitySet="channel" />
+      <End Role="transaction" EntitySet="transaction" />
+    </AssociationSet>
+    <AssociationSet Name="customer_fk" Association="Self.customer_fk">
+      <End Role="customer" EntitySet="customer" />
+      <End Role="customer_product" EntitySet="customer_product" />
+    </AssociationSet>
+    <AssociationSet Name="product_fk" Association="Self.product_fk">
+      <End Role="product" EntitySet="product" />
+      <End Role="customer_product" EntitySet="customer_product" />
+    </AssociationSet>
+    <AssociationSet Name="tr_customer_product_fk" Association="Self.tr_customer_product_fk">
+      <End Role="customer_product" EntitySet="customer_product" />
+      <End Role="transaction" EntitySet="transaction" />
+    </AssociationSet>
+    <AssociationSet Name="tr_trxtype" Association="Self.tr_trxtype">
+      <End Role="transaction_type" EntitySet="transaction_type" />
+      <End Role="transaction" EntitySet="transaction" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>

@@ -1,0 +1,155 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="mybankModel.Store" Provider="MySql.Data.MySqlClient" ProviderManifestToken="5.7" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityType Name="channel">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="name" Type="varchar" MaxLength="45" Nullable="false" />
+    <Property Name="description" Type="varchar" MaxLength="100" Nullable="false" />
+  </EntityType>
+  <EntityType Name="customer">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="name" Type="varchar" MaxLength="100" Nullable="false" />
+    <Property Name="surname" Type="varchar" MaxLength="100" Nullable="false" />
+    <Property Name="customer_id" Type="varchar" MaxLength="15" Nullable="false" />
+    <Property Name="email" Type="varchar" MaxLength="50" Nullable="false" />
+    <Property Name="mobile" Type="varchar" MaxLength="15" Nullable="false" />
+    <Property Name="phone" Type="varchar" MaxLength="15" />
+    <Property Name="password" Type="varchar" MaxLength="100" Nullable="false" />
+  </EntityType>
+  <EntityType Name="customer_product">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="customer_id" Type="int" Nullable="false" />
+    <Property Name="product_id" Type="int" Nullable="false" />
+    <Property Name="creation_date" Type="datetime" Precision="0" Nullable="false" />
+    <Property Name="termination_date" Type="datetime" Precision="0" />
+    <Property Name="balance" Type="decimal" Precision="10" Scale="0" Nullable="false" />
+    <Property Name="status" Type="varchar" MaxLength="10" Nullable="false" />
+    <Property Name="product_number" Type="varchar" MaxLength="10" Nullable="false" />
+  </EntityType>
+  <EntityType Name="product">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="name" Type="varchar" MaxLength="45" Nullable="false" />
+    <Property Name="description" Type="varchar" MaxLength="45" Nullable="false" />
+    <Property Name="status" Type="varchar" MaxLength="10" Nullable="false" />
+  </EntityType>
+  <EntityType Name="transaction">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="customer_product_id" Type="int" Nullable="false" />
+    <Property Name="channel_id" Type="int" Nullable="false" />
+    <Property Name="amount" Type="decimal" Precision="10" Scale="0" Nullable="false" />
+    <Property Name="date" Type="datetime" Precision="0" Nullable="false" />
+    <Property Name="status" Type="varchar" MaxLength="10" Nullable="false" />
+    <Property Name="type" Type="int" Nullable="false" />
+    <Property Name="transaction_number" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="transaction_type">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="description" Type="varchar" MaxLength="45" Nullable="false" />
+    <Property Name="factor" Type="tinyint" Nullable="false" />
+  </EntityType>
+  <Association Name="customer_fk">
+    <End Role="customer" Type="Self.customer" Multiplicity="1" />
+    <End Role="customer_product" Type="Self.customer_product" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="customer">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="customer_product">
+        <PropertyRef Name="customer_id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="product_fk">
+    <End Role="product" Type="Self.product" Multiplicity="1" />
+    <End Role="customer_product" Type="Self.customer_product" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="product">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="customer_product">
+        <PropertyRef Name="product_id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="tr_channel_fk">
+    <End Role="channel" Type="Self.channel" Multiplicity="1" />
+    <End Role="transaction" Type="Self.transaction" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="channel">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="transaction">
+        <PropertyRef Name="channel_id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="tr_customer_product_fk">
+    <End Role="customer_product" Type="Self.customer_product" Multiplicity="1" />
+    <End Role="transaction" Type="Self.transaction" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="customer_product">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="transaction">
+        <PropertyRef Name="customer_product_id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="tr_trxtype">
+    <End Role="transaction_type" Type="Self.transaction_type" Multiplicity="1" />
+    <End Role="transaction" Type="Self.transaction" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="transaction_type">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="transaction">
+        <PropertyRef Name="type" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="mybankModelStoreContainer">
+    <EntitySet Name="channel" EntityType="Self.channel" Schema="mybank" store:Type="Tables" />
+    <EntitySet Name="customer" EntityType="Self.customer" Schema="mybank" store:Type="Tables" />
+    <EntitySet Name="customer_product" EntityType="Self.customer_product" Schema="mybank" store:Type="Tables" />
+    <EntitySet Name="product" EntityType="Self.product" Schema="mybank" store:Type="Tables" />
+    <EntitySet Name="transaction" EntityType="Self.transaction" Schema="mybank" store:Type="Tables" />
+    <EntitySet Name="transaction_type" EntityType="Self.transaction_type" Schema="mybank" store:Type="Tables" />
+    <AssociationSet Name="customer_fk" Association="Self.customer_fk">
+      <End Role="customer" EntitySet="customer" />
+      <End Role="customer_product" EntitySet="customer_product" />
+    </AssociationSet>
+    <AssociationSet Name="product_fk" Association="Self.product_fk">
+      <End Role="product" EntitySet="product" />
+      <End Role="customer_product" EntitySet="customer_product" />
+    </AssociationSet>
+    <AssociationSet Name="tr_channel_fk" Association="Self.tr_channel_fk">
+      <End Role="channel" EntitySet="channel" />
+      <End Role="transaction" EntitySet="transaction" />
+    </AssociationSet>
+    <AssociationSet Name="tr_customer_product_fk" Association="Self.tr_customer_product_fk">
+      <End Role="customer_product" EntitySet="customer_product" />
+      <End Role="transaction" EntitySet="transaction" />
+    </AssociationSet>
+    <AssociationSet Name="tr_trxtype" Association="Self.tr_trxtype">
+      <End Role="transaction_type" EntitySet="transaction_type" />
+      <End Role="transaction" EntitySet="transaction" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>

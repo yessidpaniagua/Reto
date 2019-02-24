@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  capgemini.webapi:
+    image: ${DOCKER_REGISTRY}capgeminiwebapi
+    build:
+      context: .\Capgemini.WebApi
+      dockerfile: Dockerfile
